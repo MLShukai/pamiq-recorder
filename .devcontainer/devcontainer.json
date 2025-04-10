@@ -1,5 +1,5 @@
 {
-    "name": "python-uv-template",
+    "name": "pamiq-recorder",
     "build": {
       "context": "../",
       "dockerfile": "./Dockerfile"
