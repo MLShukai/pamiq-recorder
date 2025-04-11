@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     make \
     libopencv-dev \
+    libsndfile1 \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
 
