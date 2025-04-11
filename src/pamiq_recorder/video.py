@@ -148,5 +148,5 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
     @override
     def close(self) -> None:
         """Close the video writer and release resources."""
-        if hasattr(self, "_writer"):
+        if hasattr(self, "_writer") and self._writer.isOpened():
             self._writer.release()
