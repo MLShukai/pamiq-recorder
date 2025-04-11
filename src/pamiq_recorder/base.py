@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any, Self
 
 
 class Recorder[T](ABC):
@@ -24,4 +25,23 @@ class Recorder[T](ABC):
 
     def __del__(self) -> None:
         """Destructor that ensures resources are properly released."""
+        self.close()
+
+    def __enter__(self) -> Self:
+        """Enter the context manager protocol.
+
+        Returns:
+            The recorder instance itself.
+        """
+        return self
+
+    def __exit__(self, *args: Any, **kwds: Any) -> None:
+        """Exit the context manager protocol.
+
+        This method ensures that resources are properly released by calling close().
+
+        Args:
+            *args: Exception details if an exception was raised.
+            **kwds: Additional keyword arguments.
+        """
         self.close()
