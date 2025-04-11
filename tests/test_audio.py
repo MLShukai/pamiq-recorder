@@ -69,7 +69,10 @@ class TestAudioRecorder:
             # Create a simple sine wave (mono)
             duration = 0.1  # seconds
             t = np.linspace(0, duration, int(duration * 44100), endpoint=False)
-            data = np.sin(2 * 3.14 * 440 * t).astype(np.float32)  # 440 Hz tone
+            mono_data = np.sin(2 * np.pi * 440 * t).astype(np.float32)  # 440 Hz tone
+
+            # Reshape to 2D array (samples, channels)
+            data = mono_data.reshape(-1, 1)
 
             # Write the audio data
             recorder.write(data)
@@ -84,7 +87,28 @@ class TestAudioRecorder:
             assert sample_rate == 44100
             assert len(audio) == len(data)
             # Compare a few samples (not exact due to encoding)
-            assert np.allclose(audio[:10], data[:10], atol=1e-3)
+            assert np.allclose(audio[:10], data[:10, 0], atol=1e-3)
+        finally:
+            recorder.close()
+
+    def test_strict_dimension_check(self, audio_path: Path):
+        """Test that 1D arrays are rejected."""
+        recorder = AudioRecorder(file_path=audio_path, sample_rate=44100, channels=1)
+
+        try:
+            # Create a 1D array
+            data = np.zeros(1000, dtype=np.float32)
+
+            # Should raise ValueError for 1D array
+            with pytest.raises(ValueError, match="Expected 2D array with shape"):
+                recorder.write(data)
+
+            # Create a 3D array
+            data_3d = np.zeros((100, 1, 2), dtype=np.float32)
+
+            # Should raise ValueError for 3D array
+            with pytest.raises(ValueError, match="Expected 2D array with shape"):
+                recorder.write(data_3d)
         finally:
             recorder.close()
 
@@ -128,7 +152,9 @@ class TestAudioRecorder:
 
         try:
             # Wrong number of dimensions
-            with pytest.raises(ValueError, match="Expected 1D or 2D array"):
+            with pytest.raises(
+                ValueError, match=r"Expected 2D array with shape \(samples, channels\)"
+            ):
                 recorder.write(np.zeros((10, 10, 10), dtype=np.float32))
 
             # Wrong channels

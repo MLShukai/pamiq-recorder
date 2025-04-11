@@ -97,8 +97,7 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
         """Write a frame to the video.
 
         Args:
-            data: Image data as numpy array with shape (height, width, channels)
-                 or (height, width) for grayscale images.
+            data: Image data as numpy array with shape (height, width, channels).
 
         Raises:
             ValueError: If data shape doesn't match expected dimensions.
@@ -107,23 +106,22 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
         if not self._writer.isOpened():
             raise RuntimeError("Recorder is already closed.")
 
-        # Validate dimensions
-        if data.ndim not in [2, 3]:
-            raise ValueError(f"Expected 2D or 3D array, got {data.ndim}D")
+        # Validate dimensions - strictly require 3D array
+        if data.ndim != 3:
+            raise ValueError(
+                f"Expected 3D array with shape (height, width, channels), got {data.ndim}D array with shape {data.shape}"
+            )
 
-        # Check shape compatibility
-        if data.ndim == 2:
-            if self.channels != 1:
-                raise ValueError(f"Expected {self.channels} channels, got 1")
-            actual_height, actual_width = data.shape
-        else:  # data.ndim == 3
-            actual_height, actual_width, actual_channels = data.shape
-            if actual_channels != self.channels:
-                raise ValueError(
-                    f"Expected {self.channels} channels, got {actual_channels}"
-                )
+        # Extract dimensions
+        actual_height, actual_width, actual_channels = data.shape
 
-        # Validate dimensions
+        # Validate channel count
+        if actual_channels != self.channels:
+            raise ValueError(
+                f"Expected {self.channels} channels, got {actual_channels}"
+            )
+
+        # Validate height and width
         if actual_height != self.height or actual_width != self.width:
             raise ValueError(
                 f"Expected shape ({self.height}, {self.width}, {self.channels}), "
@@ -139,8 +137,10 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             case 4:  # RGBA to BGRA
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGRA)
-            case _:  # Grayscale (no conversion needed)
+            case 1:  # Grayscale
                 pass
+            case _:
+                raise ValueError(f"Unexpected {self.channels} channels.")
 
         # Write the frame
         self._writer.write(frame)

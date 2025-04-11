@@ -87,34 +87,30 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
         """Write audio data to the file.
 
         Args:
-            data: Audio data as numpy array with shape (samples, channels)
-                 or (samples,) for mono audio. Values should be in range [-1.0, 1.0].
+            data: Audio data as numpy array with shape (samples, channels).
+                Values should be in range [-1.0, 1.0].
 
         Raises:
             ValueError: If data shape doesn't match expected dimensions.
             RuntimeError: If the recorder is already closed.
         """
-        if not hasattr(self, "_writer") or self._writer.closed:
+        if self._writer.closed:
             raise RuntimeError("Recorder is already closed.")
 
         # Convert to float32 if needed
         audio_data = np.asarray(data, dtype=np.float32)
 
-        # Validate dimensions
-        if audio_data.ndim not in [1, 2]:
-            raise ValueError(f"Expected 1D or 2D array, got {audio_data.ndim}D")
+        # Validate dimensions - strictly require 2D array
+        if audio_data.ndim != 2:
+            raise ValueError(
+                f"Expected 2D array with shape (samples, channels), got {audio_data.ndim}D array with shape {audio_data.shape}"
+            )
 
-        # For mono data with shape (samples,), check if it matches the channels setting
-        if audio_data.ndim == 1:
-            if self.channels != 1:
-                raise ValueError(
-                    f"Expected {self.channels} channels, but got mono data with shape {audio_data.shape}"
-                )
-        else:  # audio_data.ndim == 2
-            if audio_data.shape[1] != self.channels:
-                raise ValueError(
-                    f"Expected {self.channels} channels, got data with shape {audio_data.shape}"
-                )
+        # Validate channel count
+        if audio_data.shape[1] != self.channels:
+            raise ValueError(
+                f"Expected {self.channels} channels, got data with shape {audio_data.shape}"
+            )
 
         # Write the audio data
         self._writer.write(audio_data)

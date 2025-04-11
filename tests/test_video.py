@@ -92,11 +92,14 @@ class TestVideoRecorder:
         )
 
         try:
-            # Create a simple gradient frame
-            frame = np.zeros((100, 100), dtype=np.uint8)
+            # Create a simple gradient frame - now as 3D array with shape (height, width, 1)
+            frame_2d = np.zeros((100, 100), dtype=np.uint8)
             for i in range(100):
                 for j in range(100):
-                    frame[i, j] = (i + j) * 255 // 200  # Diagonal gradient
+                    frame_2d[i, j] = (i + j) * 255 // 200  # Diagonal gradient
+
+            # Reshape to 3D with explicit channel dimension
+            frame = frame_2d.reshape(100, 100, 1)
 
             # Write the frame
             recorder.write(frame)
@@ -106,6 +109,29 @@ class TestVideoRecorder:
             assert file_size > 0, "Video file is empty after writing a frame"
         finally:
             # Clean up resources
+            recorder.close()
+
+    def test_strict_dimension_check(self, video_path: Path):
+        """Test that 2D and 4D arrays are rejected."""
+        recorder = VideoRecorder(
+            file_path=video_path, fps=30.0, height=100, width=100, channels=3
+        )
+
+        try:
+            # Create a 2D array
+            frame_2d = np.zeros((100, 100), dtype=np.uint8)
+
+            # Should raise ValueError for 2D array
+            with pytest.raises(ValueError, match="Expected 3D array with shape"):
+                recorder.write(frame_2d)
+
+            # Create a 4D array
+            frame_4d = np.zeros((1, 100, 100, 3), dtype=np.uint8)
+
+            # Should raise ValueError for 4D array
+            with pytest.raises(ValueError, match="Expected 3D array with shape"):
+                recorder.write(frame_4d)
+        finally:
             recorder.close()
 
     def test_write_rgba_frame(self, tmp_path: Path):
@@ -143,7 +169,10 @@ class TestVideoRecorder:
 
         try:
             # Wrong number of dimensions
-            with pytest.raises(ValueError, match="Expected 2D or 3D array"):
+            with pytest.raises(
+                ValueError,
+                match=r"Expected 3D array with shape \(height, width, channels\)",
+            ):
                 recorder.write(np.zeros((10, 10, 10, 10), dtype=np.uint8))
 
             # Wrong height/width
