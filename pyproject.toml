@@ -1,7 +1,7 @@
 [project]
 name = "pamiq-recorder"
 version = "0.1.0"
-description = "Add your description here"
+description = "Simple, modern, and type-safe recording library for Python"
 readme = "README.md"
 authors = [
     { name = "Geson-anko", email = "59220704+Geson-anko@users.noreply.github.com" }
