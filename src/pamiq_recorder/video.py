@@ -1,0 +1,152 @@
+"""Video recording module using OpenCV."""
+
+from pathlib import Path
+from typing import Any, Literal, override
+
+import cv2
+import numpy as np
+import numpy.typing as npt
+
+from .base import Recorder
+
+
+class VideoRecorder(Recorder[npt.NDArray[Any]]):
+    """Records video frames to a file using OpenCV.
+
+    Supports grayscale, RGB, and RGBA input formats, automatically
+    converting from RGB/RGBA to BGR/BGRA for OpenCV compatibility.
+    """
+
+    def __init__(
+        self,
+        file_path: str | Path,
+        fps: float,
+        height: int,
+        width: int,
+        channels: Literal[1, 3, 4],
+    ) -> None:
+        """Initialize a video recorder.
+
+        Args:
+            file_path: Path to save the video file. File extension determines format.
+            fps: Frames per second.
+            height: Frame height in pixels.
+            width: Frame width in pixels.
+            channels: Number of color channels (1 for grayscale, 3 for RGB, 4 for RGBA).
+
+        Raises:
+            ValueError: If channels is not 1, 3, or 4.
+            RuntimeError: If the video writer fails to initialize.
+        """
+        self.file_path = Path(file_path)
+        self.fps = fps
+        self.height = height
+        self.width = width
+        self.channels = channels
+
+        # Validate channels
+        if channels not in [1, 3, 4]:
+            raise ValueError(
+                f"Channels must be 1 (grayscale), 3 (RGB), or 4 (RGBA), got {channels}"
+            )
+
+        # Determine codec based on file extension
+        fourcc = self._get_fourcc_from_extension(self.file_path.suffix)
+
+        # Initialize VideoWriter with color flag based on channels
+        self._writer = cv2.VideoWriter(
+            str(self.file_path),
+            fourcc,
+            fps,
+            (width, height),
+            channels > 1,  # is_color flag
+        )
+
+        if not self._writer.isOpened():
+            raise RuntimeError(f"Failed to open video writer for file: {file_path}")
+
+    def _get_fourcc_from_extension(self, extension: str) -> int:
+        """Get the appropriate FourCC code based on file extension.
+
+        Args:
+            extension: File extension including the dot (e.g., '.mp4').
+
+        Returns:
+            FourCC code as an integer.
+        """
+        # Remove the leading dot if present
+        ext = extension.lower().lstrip(".")
+
+        # Map extensions to FourCC codes
+        match ext:
+            case "mp4":
+                fourcc_str = "mp4v"
+            case "avi":
+                fourcc_str = "XVID"
+            case "mov":
+                fourcc_str = "mp4v"
+            case "mkv":
+                fourcc_str = "X264"
+            case _:
+                raise ValueError(f"Video format '{ext}' is not supported.")
+
+        return cv2.VideoWriter.fourcc(*fourcc_str)
+
+    @override
+    def write(self, data: npt.NDArray[Any]) -> None:
+        """Write a frame to the video.
+
+        Args:
+            data: Image data as numpy array with shape (height, width, channels)
+                 or (height, width) for grayscale images.
+
+        Raises:
+            ValueError: If data shape doesn't match expected dimensions.
+            RuntimeError: If the recorder is already closed.
+        """
+        if not self._writer.isOpened():
+            raise RuntimeError("Recorder is already closed.")
+
+        # Validate dimensions
+        if data.ndim not in [2, 3]:
+            raise ValueError(f"Expected 2D or 3D array, got {data.ndim}D")
+
+        # Check shape compatibility
+        if data.ndim == 2:
+            if self.channels != 1:
+                raise ValueError(f"Expected {self.channels} channels, got 1")
+            actual_height, actual_width = data.shape
+        else:  # data.ndim == 3
+            actual_height, actual_width, actual_channels = data.shape
+            if actual_channels != self.channels:
+                raise ValueError(
+                    f"Expected {self.channels} channels, got {actual_channels}"
+                )
+
+        # Validate dimensions
+        if actual_height != self.height or actual_width != self.width:
+            raise ValueError(
+                f"Expected shape ({self.height}, {self.width}, {self.channels}), "
+                f"got {data.shape}"
+            )
+
+        # Convert to uint8
+        frame = np.asarray(data, dtype=np.uint8)
+
+        # Convert color format if needed
+        match self.channels:
+            case 3:  # RGB to BGR
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+            case 4:  # RGBA to BGRA
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGRA)
+            case _:  # Grayscale (no conversion needed)
+                pass
+
+        # Write the frame
+        self._writer.write(frame)
+
+    @override
+    def close(self) -> None:
+        """Close the video writer and release resources."""
+        if hasattr(self, "_writer"):
+            self._writer.release()
