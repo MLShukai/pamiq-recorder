@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:latest
 
 RUN mkdir -p /workspace
 WORKDIR /workspace
