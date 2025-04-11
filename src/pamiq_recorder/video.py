@@ -1,7 +1,7 @@
 """Video recording module using OpenCV."""
 
 from pathlib import Path
-from typing import Any, Literal, override
+from typing import Literal, override
 
 import cv2
 import numpy as np
@@ -10,7 +10,7 @@ import numpy.typing as npt
 from .base import Recorder
 
 
-class VideoRecorder(Recorder[npt.NDArray[Any]]):
+class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
     """Records video frames to a file using OpenCV.
 
     Supports grayscale, RGB, and RGBA input formats, automatically
@@ -93,7 +93,7 @@ class VideoRecorder(Recorder[npt.NDArray[Any]]):
         return cv2.VideoWriter.fourcc(*fourcc_str)
 
     @override
-    def write(self, data: npt.NDArray[Any]) -> None:
+    def write(self, data: npt.NDArray[np.uint8]) -> None:
         """Write a frame to the video.
 
         Args:

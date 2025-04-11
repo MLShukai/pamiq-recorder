@@ -144,15 +144,15 @@ class TestVideoRecorder:
         try:
             # Wrong number of dimensions
             with pytest.raises(ValueError, match="Expected 2D or 3D array"):
-                recorder.write(np.zeros((10, 10, 10, 10)))
+                recorder.write(np.zeros((10, 10, 10, 10), dtype=np.uint8))
 
             # Wrong height/width
             with pytest.raises(ValueError, match="Expected shape"):
-                recorder.write(np.zeros((240, 320, 3)))
+                recorder.write(np.zeros((240, 320, 3), dtype=np.uint8))
 
             # Wrong channels
             with pytest.raises(ValueError, match="Expected 3 channels"):
-                recorder.write(np.zeros((480, 640, 4)))
+                recorder.write(np.zeros((480, 640, 4), dtype=np.uint8))
         finally:
             recorder.close()
 
