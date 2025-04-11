@@ -1,4 +1,4 @@
-name: Main workflow
+name: Formatter & Linter / Tests / Type Check
 
 on:
   push:
