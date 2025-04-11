@@ -9,16 +9,18 @@ import soundfile as sf
 
 from .base import Recorder
 
-type SupportFormat = Literal["WAV", "FLAC", "OGG", "CAF"]
-type SupportSubtype = Literal["FLOAT", "PCM_16", "OPUS", "VORBIS", "ALAC_16"]
+type SupportFormat = Literal["WAV", "FLAC", "OGG", "CAF", "MP3"]
+type SupportSubtype = Literal[
+    "FLOAT", "PCM_16", "OPUS", "VORBIS", "ALAC_16", "MPEG_LAYER_III"
+]
 
 
 class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
     """Records audio data to a file using soundfile.
 
-    Supports various audio formats like WAV, FLAC, MP3 based on file
-    extension. Input data should be float32 arrays with values in the
-    range [-1.0, 1.0].
+    Supports various audio formats like wav, flac, mp3, m4a, ogg and
+    opusbased on file extension. Input data should be float32 arrays
+    with values in the range [-1.0, 1.0].
     """
 
     def __init__(
@@ -73,6 +75,8 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
                 return "OGG", "OPUS"
             case "m4a" | "mov" | "alac":
                 return "CAF", "ALAC_16"
+            case "mp3":
+                return "MP3", "MPEG_LAYER_III"
             case _:
                 raise ValueError(
                     f"Audio format '{ext}' is not supported or recognized."

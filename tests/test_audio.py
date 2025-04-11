@@ -180,7 +180,7 @@ class TestAudioRecorder:
             recorder.write(data)
 
     @pytest.mark.parametrize(
-        "format_extension", ["wav", "flac", "ogg", "opus", "m4a", "mov", "alac"]
+        "format_extension", ["wav", "flac", "ogg", "opus", "m4a", "mov", "alac", "mp3"]
     )
     def test_audio_formats(self, tmp_path: Path, sample_audio_data, format_extension):
         """Test writing to different audio formats."""
