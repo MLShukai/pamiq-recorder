@@ -18,7 +18,6 @@ class Recorder[T](ABC):
         """
         ...
 
-    @abstractmethod
     def close(self) -> None:
         """Close the recorder and release any resources."""
         ...

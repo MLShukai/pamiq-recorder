@@ -11,15 +11,11 @@ class RecorderImpl(Recorder[Any]):
     def write(self, data: Any):
         pass
 
-    @override
-    def close(self):
-        pass
-
 
 class TestRecorder:
     """Test suite for the Recorder abstract base class."""
 
-    @pytest.mark.parametrize("method", ["write", "close"])
+    @pytest.mark.parametrize("method", ["write"])
     def test_abstractmethod(self, method):
         """Verify that required methods are correctly marked as abstract."""
         assert method in Recorder.__abstractmethods__
