@@ -1,7 +1,7 @@
 [project]
 name = "pamiq-recorder"
 version = "0.1.0"
-description = "Simple, modern, and type-safe recording library for Python"
+description = "Simple, modern, and type-safe recording library for P-AMI<Q>"
 readme = "README.md"
 authors = [
     { name = "Geson-anko", email = "59220704+Geson-anko@users.noreply.github.com" }
@@ -12,6 +12,39 @@ dependencies = [
     "opencv-python>=4.11.0.86",
     "soundfile>=0.13.1",
 ]
+
+keywords = [
+  "recorder",
+  "audio",
+  "video",
+  "csv",
+  "soundfile",
+  "opencv",
+  "Autonomous Machine Intelligence",
+  "AMI",
+  "pamiq",
+  "P-AMI<Q>"
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Natural Language :: English",
+  "Natural Language :: Japanese",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+]
+
+[project.urls]
+Repository = "https://github.com/MLShukai/pamiq-recorder"
+Issues = "https://github.com/MLShukai/pamiq-recorder/issues"
+
 
 [build-system]
 requires = ["hatchling"]

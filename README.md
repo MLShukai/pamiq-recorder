@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Document Style](https://img.shields.io/badge/%20docstyle-google-3666d6.svg)](https://google.github.io/styleguide/pyguide.html#s3.8-comments-and-docstrings)
 
-**pamiq-recorder** is a simple, modern, and type-safe recording library for Python, providing easy and consistent interfaces for video, audio, and CSV data recording.
+**pamiq-recorder** is a simple, modern, and type-safe recording library for P-AMI\<Q>, providing easy and consistent interfaces for video, audio, and CSV data recording.
 
 ## ✨ Features
 

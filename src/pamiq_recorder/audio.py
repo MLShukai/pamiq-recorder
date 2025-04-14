@@ -9,18 +9,79 @@ import soundfile as sf
 
 from .base import Recorder
 
-type SupportFormat = Literal["WAV", "FLAC", "OGG", "CAF", "MP3"]
-type SupportSubtype = Literal[
-    "FLOAT", "PCM_16", "OPUS", "VORBIS", "ALAC_16", "MPEG_LAYER_III"
+type FormatStr = Literal[
+    "WAV",
+    "AIFF",
+    "AU",
+    "RAW",
+    "PAF",
+    "SVX",
+    "NIST",
+    "VOC",
+    "IRCAM",
+    "W64",
+    "MAT4",
+    "MAT5",
+    "PVF",
+    "XI",
+    "HTK",
+    "SDS",
+    "AVR",
+    "WAVEX",
+    "SD2",
+    "FLAC",
+    "CAF",
+    "WVE",
+    "OGG",
+    "MPC2K",
+    "RF64",
+    "MP3",
+]
+
+type SubtypeStr = Literal[
+    "PCM_S8",
+    "PCM_16",
+    "PCM_24",
+    "PCM_32",
+    "PCM_U8",
+    "FLOAT",
+    "DOUBLE",
+    "ULAW",
+    "ALAW",
+    "IMA_ADPCM",
+    "MS_ADPCM",
+    "GSM610",
+    "VOX_ADPCM",
+    "NMS_ADPCM_16",
+    "NMS_ADPCM_24",
+    "NMS_ADPCM_32",
+    "G721_32",
+    "G723_24",
+    "G723_40",
+    "DWVW_12",
+    "DWVW_16",
+    "DWVW_24",
+    "DWVW_N",
+    "DPCM_8",
+    "DPCM_16",
+    "VORBIS",
+    "OPUS",
+    "ALAC_16",
+    "ALAC_20",
+    "ALAC_24",
+    "ALAC_32",
+    "MPEG_LAYER_I",
+    "MPEG_LAYER_II",
+    "MPEG_LAYER_III",
 ]
 
 
 class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
     """Records audio data to a file using soundfile.
 
-    Supports various audio formats like wav, flac, mp3, m4a, ogg and
-    opusbased on file extension. Input data should be float32 arrays
-    with values in the range [-1.0, 1.0].
+    Supports various audio formats like wav, flac, mp3, m4a and etc
+    based on file extension. Input data should be float32 arrays with
+    values in the range [-1.0, 1.0].
     """
 
     def __init__(
@@ -28,6 +89,7 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
         file_path: str | Path,
         sample_rate: int,
         channels: int,
+        subtype: SubtypeStr | None = None,
     ) -> None:
         """Initialize an audio recorder.
 
@@ -35,18 +97,28 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
             file_path: Path to save the audio file. File extension determines format.
             sample_rate: Sample rate in Hz.
             channels: Number of audio channels.
+            subtype: Sub type of audio file format. If None, default subtype is used.
         """
         self.file_path = Path(file_path)
         self.sample_rate = sample_rate
         self.channels = channels
 
         # Get format from file extension
-        format_name, subtype = self._get_format_and_subtype_from_extension(
+        format_name, default_subtype = self._get_format_and_subtype_from_extension(
             self.file_path.suffix
         )
 
-        # Initialize SoundFile for streaming writes
+        if subtype is None:
+            subtype = default_subtype
+        else:
+            available_subtypes = sf.available_subtypes(format_name)
+            if subtype not in available_subtypes:
+                raise ValueError(
+                    f"Specified subtype '{subtype}' is invalid for {format_name} format. "
+                    f"Available subtypes are {list(available_subtypes.keys())}"
+                )
 
+        # Initialize SoundFile for streaming writes
         self._writer = sf.SoundFile(
             str(self.file_path),
             mode="w",
@@ -58,29 +130,79 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
 
     def _get_format_and_subtype_from_extension(
         self, extension: str
-    ) -> tuple[SupportFormat, SupportSubtype]:
+    ) -> tuple[FormatStr, SubtypeStr | None]:
         # Remove the leading dot if present
         ext = extension.lower().lstrip(".")
 
         # Map extensions to format names
         # Note: not all formats support writing in libsndfile/soundfile
+        format: FormatStr
+        subtype: SubtypeStr | None = None
+
         match ext:
+            # Common formats
             case "wav":
-                return "WAV", "PCM_16"
+                format = "WAV"
             case "flac":
-                return "FLAC", "PCM_16"
+                format = "FLAC"
             case "ogg":
-                return "OGG", "VORBIS"
+                format = "OGG"
             case "opus":
-                return "OGG", "OPUS"
-            case "m4a" | "mov" | "alac":
-                return "CAF", "ALAC_16"
+                format, subtype = "OGG", "OPUS"
+            case "caf" | "m4a" | "mov" | "alac":
+                format = "CAF"
             case "mp3":
-                return "MP3", "MPEG_LAYER_III"
+                format = "MP3"
+            case "aiff" | "aif":
+                format = "AIFF"
+            case "au" | "snd":
+                format = "AU"
+            case "avr":
+                format = "AVR"
+            case "htk":
+                format = "HTK"
+            case "sf" | "ircam":
+                format = "IRCAM"
+            case "mat4":
+                format = "MAT4"
+            case "mat5" | "mat":
+                format = "MAT5"
+            case "nist":
+                format = "NIST"
+            case "paf":
+                format = "PAF"
+            case "pvf":
+                format = "PVF"
+            case "sd2":
+                format = "SD2"
+            case "sds":
+                format = "SDS"
+            case "iff" | "svx":
+                format = "SVX"
+            case "voc":
+                format = "VOC"
+            case "w64":
+                format = "W64"
+            case "wavex":
+                format = "WAVEX"
+            case "wve":
+                format = "WVE"
+            case "xi":
+                format = "XI"
+            case "rf64":
+                format = "RF64"
+            case "mpc" | "mpc2k":
+                format = "MPC2K"
             case _:
                 raise ValueError(
                     f"Audio format '{ext}' is not supported or recognized."
                 )
+
+        if subtype is None:
+            # Get the default subtype for this format
+            subtype = sf.default_subtype(format)
+
+        return format, subtype
 
     @override
     def write(self, data: npt.NDArray[np.float32]) -> None:
