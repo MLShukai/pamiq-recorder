@@ -2,9 +2,9 @@ name: Formatter & Linter / Tests / Type Check
 
 on:
   push:
-    branches: [main]
+    branches: [main, stable]
   pull_request:
-    branches: [main]
+    branches: [main, stable]
 
 env:
   PYTHON_VERSION: "3.12"
