@@ -3,7 +3,7 @@ from importlib import metadata
 from .audio import AudioRecorder
 from .base import Recorder, RecordingWrapper
 from .csv import CSVRecorder
-from .jsonl import JSONLRecorder
+from .jsonl import JsonlRecorder
 from .video import VideoRecorder
 
 __version__ = metadata.version(__name__.replace("_", "-"))
@@ -14,5 +14,5 @@ __all__ = [
     "AudioRecorder",
     "CSVRecorder",
     "RecordingWrapper",
-    "JSONLRecorder",
+    "JsonlRecorder",
 ]

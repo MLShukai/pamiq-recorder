@@ -6,14 +6,14 @@ from pathlib import Path
 
 import pytest
 
-from pamiq_recorder.jsonl import JSONLRecorder
+from pamiq_recorder.jsonl import JsonlRecorder
 
 
-class TestJSONLRecorder:
-    """Test suite for the JSONLRecorder class."""
+class TestJsonlRecorder:
+    """Test suite for the JsonlRecorder class."""
 
     def test_default_file_name_format(self):
-        assert Path(JSONLRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".jsonl"
+        assert Path(JsonlRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".jsonl"
 
     @pytest.fixture
     def jsonl_path(self, tmp_path: Path) -> Path:
@@ -22,7 +22,7 @@ class TestJSONLRecorder:
 
     def test_init_and_file_creation(self, jsonl_path: Path):
         """Test recorder initialization creates a file."""
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
 
         try:
             # Check that the JSONL file exists
@@ -36,7 +36,7 @@ class TestJSONLRecorder:
 
     def test_write_simple_data(self, jsonl_path: Path):
         """Test writing simple data types."""
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
 
         try:
             # Write different data types
@@ -72,7 +72,7 @@ class TestJSONLRecorder:
 
     def test_write_complex_data(self, jsonl_path: Path):
         """Test writing complex data structures."""
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
 
         # Complex nested data
         complex_data = {
@@ -96,7 +96,7 @@ class TestJSONLRecorder:
 
     def test_write_non_serializable_data(self, jsonl_path: Path):
         """Test that writing non-serializable data raises TypeError."""
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
 
         try:
             # A set is not JSON serializable
@@ -108,7 +108,7 @@ class TestJSONLRecorder:
     def test_ensure_ascii_option(self, jsonl_path: Path):
         """Test the ensure_ascii option."""
         # With ensure_ascii=True (default)
-        recorder1 = JSONLRecorder(file_path=jsonl_path)
+        recorder1 = JsonlRecorder(file_path=jsonl_path)
         try:
             recorder1.write("こんにちは")  # Japanese text
             recorder1.close()
@@ -122,7 +122,7 @@ class TestJSONLRecorder:
             recorder1.close()
 
         # With ensure_ascii=False
-        recorder2 = JSONLRecorder(file_path=str(jsonl_path) + "_2", ensure_ascii=False)
+        recorder2 = JsonlRecorder(file_path=str(jsonl_path) + "_2", ensure_ascii=False)
         try:
             recorder2.write("こんにちは")
             recorder2.close()
@@ -138,7 +138,7 @@ class TestJSONLRecorder:
 
     def test_timestamps_are_sequential(self, jsonl_path: Path):
         """Test that timestamps are sequential and close to current time."""
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
 
         # Get current time for reference
         start_time = time.time()
@@ -168,7 +168,7 @@ class TestJSONLRecorder:
     def test_close_and_reopen(self, jsonl_path: Path):
         """Test closing and reopening a JSON Lines file."""
         # Create and close a recorder
-        recorder = JSONLRecorder(file_path=jsonl_path)
+        recorder = JsonlRecorder(file_path=jsonl_path)
         recorder.write({"key": "value"})
         recorder.close()
 
