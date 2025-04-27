@@ -12,6 +12,9 @@ from pamiq_recorder.csv import CSVRecorder
 class TestCSVRecorder:
     """Test suite for the CSVRecorder class."""
 
+    def test_default_file_name_format(self):
+        assert Path(CSVRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".csv"
+
     @pytest.fixture
     def csv_path(self, tmp_path: Path) -> Path:
         """Create a temporary path for the CSV file."""

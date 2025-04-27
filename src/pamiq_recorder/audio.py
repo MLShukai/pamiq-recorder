@@ -1,6 +1,6 @@
 """Audio recording module using soundfile."""
 
-from typing import Literal, override
+from typing import ClassVar, Literal, override
 
 import numpy as np
 import numpy.typing as npt
@@ -82,6 +82,8 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
     based on file extension. Input data should be float32 arrays with
     values in the range [-1.0, 1.0].
     """
+
+    DEFAULT_FILE_NAME_FORMAT: ClassVar[str] = Recorder.DEFAULT_FILE_NAME_FORMAT + ".ogg"
 
     @override
     def __init__(

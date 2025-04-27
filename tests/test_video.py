@@ -11,6 +11,9 @@ from pamiq_recorder.video import VideoRecorder
 class TestVideoRecorder:
     """Test suite for the VideoRecorder class."""
 
+    def test_default_file_name_format(self):
+        assert Path(VideoRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".mp4"
+
     @pytest.fixture
     def video_path(self, tmp_path: Path) -> Path:
         """Create a temporary path for the video file."""

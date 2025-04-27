@@ -3,7 +3,7 @@
 import csv
 import time
 from collections.abc import Iterable
-from typing import Any, override
+from typing import Any, ClassVar, override
 
 from .base import Recorder, StrPath
 
@@ -14,6 +14,8 @@ class CSVRecorder(Recorder[Iterable[Any]]):
     Automatically adds a timestamp column to each row. The timestamp is
     recorded as Unix time (seconds since epoch).
     """
+
+    DEFAULT_FILE_NAME_FORMAT: ClassVar[str] = Recorder.DEFAULT_FILE_NAME_FORMAT + ".csv"
 
     @override
     def __init__(

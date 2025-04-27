@@ -1,6 +1,6 @@
 """Video recording module using OpenCV."""
 
-from typing import Literal, override
+from typing import ClassVar, Literal, override
 
 import cv2
 import numpy as np
@@ -15,6 +15,8 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
     Supports grayscale, RGB, and RGBA input formats, automatically
     converting from RGB/RGBA to BGR/BGRA for OpenCV compatibility.
     """
+
+    DEFAULT_FILE_NAME_FORMAT: ClassVar[str] = Recorder.DEFAULT_FILE_NAME_FORMAT + ".mp4"
 
     @override
     def __init__(
