@@ -7,7 +7,7 @@ from typing import Any, ClassVar, override
 from .base import Recorder, StrPath
 
 
-class JsonLineRecorder(Recorder[Any]):
+class JSONLRecorder(Recorder[Any]):
     """Records data as JSON Lines (LDJSON) entries to a file.
 
     Each entry is written as a single line containing a JSON object with
