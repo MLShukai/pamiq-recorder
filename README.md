@@ -12,6 +12,7 @@
 - 📹 Video recording via OpenCV with support for multiple formats
 - 🎵 Audio recording via SoundFile with various audio formats
 - 📊 CSV recording with automatic timestamping
+- 📦 JSONL (JSON Lines): Line-delimited JSON format for streaming data records
 - 🔗 Seamless integration with [**PAMIQ-Core**](https://github.com/MLShukai/pamiq-core) framework using `to_wrapper` factory method.
 - 🔍 Type-safe interfaces with complete type annotations
 - 🧪 Comprehensive test coverage
@@ -151,6 +152,45 @@ recorder.write([25.6, 59.8, 1013.15])
 # Close when done
 recorder.close()
 ```
+
+### JSONL Recording
+
+```python
+from pamiq_recorder import JsonlRecorder
+import time
+
+# Create a JSONL recorder
+recorder = JsonlRecorder(
+    file_path="sensor_data.jsonl",
+    ensure_ascii=False  # Optional: Allow direct Unicode characters
+)
+
+# Write various data types
+recorder.write("Simple string")
+recorder.write(42)
+recorder.write({"temperature": 25.4, "humidity": 60.2, "pressure": 1013.25})
+
+# Complex nested structures
+recorder.write({
+    "device_info": {
+        "id": "sensor-12345",
+        "location": "room-1",
+        "firmware": "v2.1.3"
+    },
+    "readings": [
+        {"type": "temperature", "value": 25.4},
+        {"type": "humidity", "value": 60.2}
+    ],
+    "status": "active"
+})
+
+# Close when done
+recorder.close()
+```
+
+The JsonlRecorder stores data in the JSON Lines format (also known as JSONL or Line-delimited JSON), where each line is a valid, independent JSON object.
+
+Each line is saved in the format `{"timestamp": 1619855734.123, "data": ...}` where the timestamp is automatically added and the data can be any JSON-serializable value.
 
 ### Using Context Managers
 
