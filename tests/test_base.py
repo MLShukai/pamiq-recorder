@@ -1,3 +1,4 @@
+from pathlib import Path, PurePath
 from typing import Any, override
 
 import pytest
@@ -21,9 +22,17 @@ class TestRecorder:
         assert method in Recorder.__abstractmethods__
 
     @pytest.fixture
-    def recorder(self):
+    def recorder(self, tmp_path):
         """Provide a concrete implementation of Recorder for testing."""
-        return RecorderImpl()
+        return RecorderImpl(tmp_path / "recorder")
+
+    @pytest.mark.parametrize(
+        "file_path", ["string/path", PurePath("pure/path"), Path("path")]
+    )
+    def test_init(self, file_path):
+        recorder = RecorderImpl(file_path)
+        assert isinstance(recorder.file_path, Path)
+        assert recorder.file_path == Path(file_path)
 
     def test_del(self, recorder: RecorderImpl, mocker: MockerFixture):
         """Ensure the destructor properly calls the close method."""

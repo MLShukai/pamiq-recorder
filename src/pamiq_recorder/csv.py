@@ -3,10 +3,9 @@
 import csv
 import time
 from collections.abc import Iterable
-from pathlib import Path
 from typing import Any, override
 
-from .base import Recorder
+from .base import Recorder, StrPath
 
 
 class CSVRecorder(Recorder[Iterable[Any]]):
@@ -16,9 +15,10 @@ class CSVRecorder(Recorder[Iterable[Any]]):
     recorded as Unix time (seconds since epoch).
     """
 
+    @override
     def __init__(
         self,
-        file_path: str | Path,
+        file_path: StrPath,
         headers: Iterable[str],
         timestamp_header: str = "timestamp",
     ) -> None:
@@ -32,7 +32,7 @@ class CSVRecorder(Recorder[Iterable[Any]]):
         Raises:
             ValueError: If timestamp_header conflicts with any user-provided header.
         """
-        self.file_path = Path(file_path)
+        super().__init__(file_path)
         self.headers = list(headers)
         self.timestamp_header = timestamp_header
 

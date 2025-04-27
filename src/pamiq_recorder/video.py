@@ -1,13 +1,12 @@
 """Video recording module using OpenCV."""
 
-from pathlib import Path
 from typing import Literal, override
 
 import cv2
 import numpy as np
 import numpy.typing as npt
 
-from .base import Recorder
+from .base import Recorder, StrPath
 
 
 class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
@@ -19,7 +18,7 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
 
     def __init__(
         self,
-        file_path: str | Path,
+        file_path: StrPath,
         fps: float,
         height: int,
         width: int,
@@ -38,7 +37,7 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
             ValueError: If channels is not 1, 3, or 4.
             RuntimeError: If the video writer fails to initialize.
         """
-        self.file_path = Path(file_path)
+        super().__init__(file_path)
         self.fps = fps
         self.height = height
         self.width = width

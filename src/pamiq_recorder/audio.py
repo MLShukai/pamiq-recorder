@@ -1,13 +1,12 @@
 """Audio recording module using soundfile."""
 
-from pathlib import Path
 from typing import Literal, override
 
 import numpy as np
 import numpy.typing as npt
 import soundfile as sf
 
-from .base import Recorder
+from .base import Recorder, StrPath
 
 type FormatStr = Literal[
     "WAV",
@@ -84,9 +83,10 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
     values in the range [-1.0, 1.0].
     """
 
+    @override
     def __init__(
         self,
-        file_path: str | Path,
+        file_path: StrPath,
         sample_rate: int,
         channels: int,
         subtype: SubtypeStr | None = None,
@@ -99,7 +99,7 @@ class AudioRecorder(Recorder[npt.NDArray[np.float32]]):
             channels: Number of audio channels.
             subtype: Sub type of audio file format. If None, default subtype is used.
         """
-        self.file_path = Path(file_path)
+        super().__init__(file_path)
         self.sample_rate = sample_rate
         self.channels = channels
 

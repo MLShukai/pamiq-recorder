@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
+from pathlib import Path, PurePath
 from typing import Any, Self
+
+type StrPath = PurePath | str
 
 
 class Recorder[T](ABC):
@@ -8,7 +11,19 @@ class Recorder[T](ABC):
     This class defines the interface for recording data of type T.
     Concrete implementations should specify the recording mechanism and
     handle proper resource management.
+
+    Attributes:
+        file_path: Path to the output file where data will be recorded.
+                  Input paths are converted to pathlib.Path objects.
     """
+
+    def __init__(self, file_path: StrPath) -> None:
+        """Initialize the recorder with a file path.
+
+        Args:
+            file_path: Path to the output file. Can be a string or a Path-like object.
+        """
+        self.file_path = Path(file_path)
 
     @abstractmethod
     def write(self, data: T) -> None:
