@@ -1,6 +1,6 @@
 [project]
 name = "pamiq-recorder"
-version = "0.1.0"
+version = "0.2.0"
 description = "Simple, modern, and type-safe recording library for P-AMI<Q>"
 readme = "README.md"
 authors = [
