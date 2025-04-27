@@ -132,11 +132,11 @@ recorder.close()
 ### CSV Recording
 
 ```python
-from pamiq_recorder import CSVRecorder
+from pamiq_recorder import CsvRecorder
 import time
 
 # Create a CSV recorder with custom headers
-recorder = CSVRecorder(
+recorder = CsvRecorder(
     file_path="sensor_data.csv",
     headers=["temperature", "humidity", "pressure"],
     timestamp_header="time"
