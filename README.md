@@ -12,6 +12,7 @@
 - 📹 Video recording via OpenCV with support for multiple formats
 - 🎵 Audio recording via SoundFile with various audio formats
 - 📊 CSV recording with automatic timestamping
+- 🔗 Seamless integration with [**PAMIQ-Core**](https://github.com/MLShukai/pamiq-core) framework using `to_wrapper` factory method.
 - 🔍 Type-safe interfaces with complete type annotations
 - 🧪 Comprehensive test coverage
 
@@ -34,6 +35,37 @@ make venv  # Sets up virtual environment with all dependencies
 - SoundFile (for audio recording, `libsndfile1` for Ubuntu.)
 
 ## 📝 Usage
+
+### PAMIQ-Core Integration
+
+All recorders provide seamless integration with the PAMIQ-Core framework through wrapper functionality, allowing you to easily record data from sensors and observations:
+
+```python
+from pamiq_recorder import VideoRecorder
+from pamiq_core.interaction.wrappers import SensorWrapper
+
+# Create a camera sensor
+camera_sensor = YourCameraSensor()  # Your implementation of a sensor class
+
+# Wrap the camera sensor to record all observations
+wrapped_sensor = SensorWrapper(
+    camera_sensor,
+    VideoRecorder.to_wrapper(
+        save_dir="./camera_recordings",
+        fps=30.0,
+        height=480,
+        width=640,
+        channels=3
+    )
+)
+```
+
+Recording wrappers automatically:
+
+- Create new recordings with timestamped filenames
+- Close recordings when the system pauses
+- Create fresh recordings when the system resumes
+- Clean up resources properly during teardown
 
 ### Video Recording
 

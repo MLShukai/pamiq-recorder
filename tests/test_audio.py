@@ -12,6 +12,9 @@ from pamiq_recorder.audio import AudioRecorder
 class TestAudioRecorder:
     """Test suite for the AudioRecorder class."""
 
+    def test_default_file_name_format(self):
+        assert Path(AudioRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".ogg"
+
     @pytest.fixture
     def audio_path(self, tmp_path: Path) -> Path:
         """Create a temporary path for the audio file."""
