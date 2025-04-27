@@ -16,6 +16,7 @@ class VideoRecorder(Recorder[npt.NDArray[np.uint8]]):
     converting from RGB/RGBA to BGR/BGRA for OpenCV compatibility.
     """
 
+    @override
     def __init__(
         self,
         file_path: StrPath,
