@@ -10,6 +10,7 @@ requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.2.4",
     "opencv-python>=4.11.0.86",
+    "pamiq-core>=0.2.0",
     "soundfile>=0.13.1",
 ]
 
