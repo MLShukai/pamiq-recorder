@@ -6,14 +6,14 @@ from pathlib import Path
 
 import pytest
 
-from pamiq_recorder.csv import CSVRecorder
+from pamiq_recorder.csv import CsvRecorder
 
 
-class TestCSVRecorder:
-    """Test suite for the CSVRecorder class."""
+class TestCsvRecorder:
+    """Test suite for the CsvRecorder class."""
 
     def test_default_file_name_format(self):
-        assert Path(CSVRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".csv"
+        assert Path(CsvRecorder.DEFAULT_FILE_NAME_FORMAT).suffix == ".csv"
 
     @pytest.fixture
     def csv_path(self, tmp_path: Path) -> Path:
@@ -23,7 +23,7 @@ class TestCSVRecorder:
     def test_init_and_file_creation(self, csv_path: Path):
         """Test recorder initialization creates a file with correct headers."""
         headers = ["value1", "value2", "value3"]
-        recorder = CSVRecorder(file_path=csv_path, headers=headers)
+        recorder = CsvRecorder(file_path=csv_path, headers=headers)
 
         try:
             # Check that the CSV file exists
@@ -41,7 +41,7 @@ class TestCSVRecorder:
         """Test initialization with custom timestamp header."""
         headers = ["col1", "col2"]
         timestamp_header = "unix_time"
-        recorder = CSVRecorder(
+        recorder = CsvRecorder(
             file_path=csv_path, headers=headers, timestamp_header=timestamp_header
         )
 
@@ -67,7 +67,7 @@ class TestCSVRecorder:
             ValueError,
             match="Timestamp header 'timestamp' conflicts with a user-provided header",
         ):
-            CSVRecorder(file_path=csv_path, headers=headers)
+            CsvRecorder(file_path=csv_path, headers=headers)
 
     def test_init_duplicate_headers(self, csv_path: Path):
         """Test initialization fails when duplicate column names are
@@ -77,7 +77,7 @@ class TestCSVRecorder:
         with pytest.raises(
             ValueError, match="Duplicate column names found in headers: time"
         ):
-            CSVRecorder(file_path=csv_path, headers=headers)
+            CsvRecorder(file_path=csv_path, headers=headers)
 
     def test_init_multiple_duplicate_headers(self, csv_path: Path):
         """Test initialization fails when multiple sets of duplicate headers
@@ -85,12 +85,12 @@ class TestCSVRecorder:
         headers = ["a", "b", "a", "c", "b", "d"]  # "a" and "b" both appear twice
 
         with pytest.raises(ValueError, match="Duplicate column names found in headers"):
-            CSVRecorder(file_path=csv_path, headers=headers)
+            CsvRecorder(file_path=csv_path, headers=headers)
 
     def test_write_data(self, csv_path: Path):
         """Test writing data rows."""
         headers = ["name", "value", "flag"]
-        recorder = CSVRecorder(file_path=csv_path, headers=headers)
+        recorder = CsvRecorder(file_path=csv_path, headers=headers)
 
         try:
             # Write a few rows of data
@@ -124,7 +124,7 @@ class TestCSVRecorder:
     def test_write_incorrect_data_length(self, csv_path: Path):
         """Test write method rejects data with incorrect length."""
         headers = ["col1", "col2"]
-        recorder = CSVRecorder(file_path=csv_path, headers=headers)
+        recorder = CsvRecorder(file_path=csv_path, headers=headers)
 
         try:
             # Try to write too few values
@@ -140,7 +140,7 @@ class TestCSVRecorder:
     def test_timestamps_are_sequential(self, csv_path: Path):
         """Test that timestamps are sequential and close to current time."""
         headers = ["value"]
-        recorder = CSVRecorder(file_path=csv_path, headers=headers)
+        recorder = CsvRecorder(file_path=csv_path, headers=headers)
 
         # Get current time for reference
         start_time = time.time()
@@ -172,7 +172,7 @@ class TestCSVRecorder:
     def test_close_and_reopen(self, csv_path: Path):
         """Test closing and reopening a CSV file."""
         # Create and close a recorder
-        recorder = CSVRecorder(file_path=csv_path, headers=["data"])
+        recorder = CsvRecorder(file_path=csv_path, headers=["data"])
         recorder.write([42])
         recorder.close()
 

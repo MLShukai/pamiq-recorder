@@ -8,7 +8,7 @@ from typing import Any, ClassVar, override
 from .base import Recorder, StrPath
 
 
-class CSVRecorder(Recorder[Iterable[Any]]):
+class CsvRecorder(Recorder[Iterable[Any]]):
     """Records data as CSV rows to a file.
 
     Automatically adds a timestamp column to each row. The timestamp is
