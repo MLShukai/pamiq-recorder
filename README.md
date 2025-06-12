@@ -1,4 +1,6 @@
-# 🎬 pamiq-recorder
+![logo](./docs/images/logo.svg)
+
+# pamiq-recorder
 
 [![Formatter & Linter / Tests / Type Check](https://github.com/MLShukai/pamiq-recorder/actions/workflows/main.yml/badge.svg)](https://github.com/MLShukai/pamiq-recorder/actions/workflows/main.yml)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
